@@ -1,0 +1,276 @@
+@import "https://fonts.googleapis.com/css2?family=Sen&display=swap";
+
+@import "https://rsms.me/inter/inter.css";
+
+html {
+font-family:'Inter',sans-serif;
+user-select: none;
+}
+
+@supports (font-variation-settings: normal) {
+html {
+font-family:'Inter var',sans-serif
+}
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('/resources/media/background.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* This keeps the background fixed while scrolling */
+    height: 100vh;
+  }  
+
+.slider_settings, .main_properties, .fuel_properties, .display_properties, .list
+{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.thruster_container 
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+.combustion_chamber 
+{
+    display: flex;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(200,200,200,0.5);
+}
+.converging_section
+{
+    display: flex;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(200,200,200,0.5);
+
+    -webkit-clip-path: polygon(0 0, 100% 40%, 100% 60%, 0% 100%);
+    clip-path: polygon(0 0, 100% 40%, 100% 60%, 0% 100%);
+}
+
+.nozzle
+{
+    display: flex;
+    width: 100px;
+    height: 100px;
+    background-color: rgba(200,200,200,0.5);
+
+    -webkit-clip-path: polygon(0 60%, 0 40%, 100% 0, 100% 100%);
+    clip-path: polygon(0 60%, 0 40%, 100% 0, 100% 100%);
+}
+.main_container 
+{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    gap: 10px;
+}
+.thruster_properties 
+{
+    background-color: rgba(250,250,250,0.7);
+    border-radius: 10px;
+    padding: 1em;
+    height: 90vh;
+    overflow-y:scroll;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.30), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(2px);
+    width: 20%;
+}
+.thruster_display 
+{
+    background-color: rgba(250,250,250,0.7);
+    border-radius: 10px;
+    padding: 1em;
+    height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.30), 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(2px);
+    width: 30%;
+    position: relative;
+}
+.thruster_container
+{
+    height: 100%;
+    
+    top: 0px;
+    left: 0px;
+}
+.thruster_container * 
+{
+    transition: all 0.1s;
+    background: #ABD7FF;
+}
+.thruster_container .combustion_chamber
+{
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-left:#0085FF 1px solid;
+    border-top:#0085FF 1px solid;
+    border-bottom:#0085FF 1px solid;
+}
+.thruster_container .nozzle
+{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.list.input 
+{
+    width: 100%;
+}
+.list.input.item
+{
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+.list.input.item .text_input
+{
+    width: 20%;
+    border: rgba(125, 125, 125, 0.683) 1px solid;
+    border-radius: 5px;
+    padding: 0.25em;
+    padding-left: 0.5em;
+}
+.list.input .label
+{
+    margin-bottom: 1px;
+    font-weight: 500;
+    font-size: 0.9em;
+}
+.list.input.item .slider 
+{
+    width: 70%;
+}
+.thruster_properties .section_label
+{
+    margin-bottom: 1px;
+    margin-top: 1px;
+    font-weight: 500;
+    font-size: 1.5em;
+}
+.list.input.item .label
+{
+    margin: 0px;
+}
+
+
+
+input[type="range"] {
+    /* removing default appearance */
+    -webkit-appearance: none;
+    appearance: none; 
+    /* creating a custom design */
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+    /*  slider progress trick  */
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  
+  /* Track: webkit browsers */
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 15px;
+    background: white;
+    border-radius: 10px;
+  }
+  
+  /* Track: Mozilla Firefox */
+  input[type="range"]::-moz-range-track {
+    height: 15px;
+    background: white;
+    border-radius: 10px;
+  }
+  
+  /* Thumb: webkit */
+  input[type="range"]::-webkit-slider-thumb {
+    /* removing default appearance */
+    -webkit-appearance: none;
+    appearance: none; 
+    /* creating a custom design */
+    height: 15px;
+    width: 15px;
+    background-color: #0085FF;
+    border-radius: 50px;
+    border: 0px solid #0085FF;
+    /*  slider progress trick  */
+    box-shadow: -407px 0 0 400px #ABD7FF;
+  }
+  
+  
+  /* Thumb: Firefox */
+  input[type="range"]::-moz-range-thumb {
+    height: 15px;
+    width: 15px;
+    background-color: #0085FF;
+    border-radius: 50px;
+    border: 0px solid #0085FF;
+    /*  slider progress trick  */
+    box-shadow: -407px 0 0 400px #ABD7FF;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  /* Background color of the scrollbar track */
+  ::-webkit-scrollbar-track {
+    background-color: #eff1fb;
+  }
+  
+  /* Color of the scrollbar handle */
+  ::-webkit-scrollbar-thumb {
+    background-color: #abbdd7;
+    border-radius: 2.5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Color of the scrollbar handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+  
+  /* Width and height of the scrollbar buttons/track pieces (arrows at the top/bottom and track behind the handle) */
+  ::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+  }
+  
+  /* Color of the scrollbar buttons/track pieces (arrows at the top/bottom and track behind the handle) */
+  ::-webkit-scrollbar-button {
+    background-color: #ccc;
+  }
+  
+  /* Color of the scrollbar corner */
+  ::-webkit-scrollbar-corner {
+    background-color: #f1f1f1;
+  }
+
+  .thruster_properties .fuel_properties .list.input
+  {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
