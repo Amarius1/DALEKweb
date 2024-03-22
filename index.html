@@ -1,146 +1,376 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <title>DALEKweb - Welcome</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>DALEKweb - Welcome</title>
+ 
+  <script type="module" defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.js"></script>
+  <link href="resources/css/styles.css" type="text/css" rel="stylesheet">
 
-    <link href="resources/css/styles.css" type="text/css" rel="stylesheet">
+
+</head>
+
+<body>
+  <section class="main_container">
+    <section class="thruster_properties">
+      <section class="categories">
+        <a class="btn" target="tab1"><i>tune</i><label>Performance</label></a>
+        <a class="btn" target="tab2"><i>change_history</i><label>Nozzle</label></a>
+        <a class="btn" target="tab3"><i>crop_portrait</i><label>Combustion chamber</label></a>
+        <a class="btn" target="tab4" state="selected"><i>sprinkler</i><label>Injector</label></a>
+        <a class="btn" target="tab5"><i>snowing_heavy</i><label>Propellant</label></a>
+      </section>
+      <section class="current_tab">
+
+      </section>
+      <a id="Reset" class="btn ripple reset">Reset</a>
+    </section>
+    <section class="thruster_display" id="thrusterContainer">
+      <div class="thruster_container">
+        <span class="main_layer">
+          <div class="injector_mock"><i class="icon">counter_5</i></div>
+          <div class="combustion_chamber"><i class="icon">counter_4</i></div>
+          <div class="converging_section"><i class="icon">counter_3</i></div>
+          <div class="nozzle"><i class="icon">counter_1</i><i class="icon">counter_2</i></div>
+        </span>
+        <span class="second_layer">
+          <div class="injector_mock_thickness"></div>
+          <div class="comb_thickness"></div>
+          <div class="conv_thickness"></div>
+          <div class="nozz_thickness"></div>
+        </span>
+      </div>
+      <div class="view_settings">
+        <p class="title">Nozzle display</p>
+        <a class="btn">Conical</a>
+        <a class="btn">Bell</a>
+      </div>
+      <div class="thruster_dimensions">
+        <span class="card">
+          <span class="header">
+            <i class="icon">counter_1</i>
+            <p>Nozzle Throat</p>
+          </span>
+          <span class="content">
+            <p class="title">Area [mm^2]</p>
+            <p id="At" class="btn result">Null</p>
+            <p class="title">Diameter [mm]</p>
+            <p id="Dt" class="btn result">Null</p>
+            <p class="title">Radius [mm]</p>
+            <p id="Rt" class="btn result">Null</p>
+          </span>
+        </span>
+        <span class="card">
+          <span class="header">
+            <i class="icon">counter_2</i>
+            <p>Nozzle Exit</p>
+          </span>
+          <span class="content">
+            <p class="title">Area [mm^2]</p>
+            <p id="Ae" class="btn result">Null</p>
+            <p class="title">Diameter [mm]</p>
+            <p id="De" class="btn result">Null</p>
+            <p class="title">Radius [mm]</p>
+            <p id="Re" class="btn result">Null</p>
+          </span>
+        </span>
+        <span class="card">
+          <span class="header">
+            <i class="icon">counter_3</i>
+            <p>Converging Section</p>
+          </span>
+          <span class="content">
+            <p class="title">Length [mm]</p>
+            <p id="Lcc" class="btn result">Null</p>
+            <p class="title">Angle [deg]</p>
+            <p id="AlphaC" class="btn result">Null</p>
+          </span>
+        </span>
+        <span class="card">
+          <span class="header">
+            <i class="icon">counter_4</i>
+            <p>Combustion Chamber</p>
+          </span>
+          <span class="content">
+            <p class="title">Area [mm^2]</p>
+            <p id="Ac" class="btn result">Null</p>
+            <p class="title">Diameter [mm]</p>
+            <p id="Dc" class="btn result">Null</p>
+            <p class="title">Radius [mm]</p>
+            <p id="Rc" class="btn result">Null</p>
+            <p class="title">Minimum thickness [mm]</p>
+            <p id="Wt" class="btn result">Null</p>
+          </span>
+        </span>
+      </div>
+    </section>
+  </section>
+  <section class="tab_container">
+    <span class="tab_content" id="tab1">
+      <p class="section_label">Performance characteristics</p>
+      <div class="main_properties">
+        <div class="list input">
+          <p class="label">Thrust [N]</p>
+          <div class="list input item">
+            <!-- Pair 1: Thrust -->
+            <input type="number" min="0.1" max="50.0" value="0.0" class="text_input textfield" step="0.1"
+              id="ThrustText">
+            <input type="range" min="0.1" max="50.0" value="0.0" class="slider" id="ThrustSlider" step="0.1">
+          </div>
+          <p class="label">ISP [s] - Specific Impulse</p>
+          <div class="list input item">
+            <!-- Pair 2: ISP -->
+
+            <input type="number" min="20" max="350" value="0" class="text_input" id="ISPText">
+            <input type="range" min="20" max="350" value="0" class="slider" id="ISPSlider" step="5">
+          </div>
+
+
+          <p class="label">Material maximum allowable stress [MPa]</p>
+          <div class="list input item">
+            <!-- Pair 9: AllowableStress -->
+
+            <input type="number" min="20" max="1000" value="0" class="text_input" id="StressText">
+            <input type="range" min="20" max="1000" value="0" class="slider" id="StressSlider" step="10">
+          </div>
+
+
+
+
+        </div>
+      </div>
+
+
+
+
+    </span>
+    <span class="tab_content" id="tab2">
+      <p class="section_label">Nozzle parameters</p>
+      <div class="main_properties">
+        <div class="list input">
+          <p class="label">Expansion ratio</p>
+          <div class="list input item">
+            <!-- Pair 5: ExpRat -->
+
+            <input type="number" min="5" max="500" value="0" class="text_input" id="ExpRatText" step="10">
+            <input type="range" min="5" max="500" value="0" class="slider" id="ExpRatSlider" step="10">
+
+          </div>
+          <p class="label">Nozzle angle [deg]</p>
+          <div class="list input item">
+
+            <input type="number" min="0" max="70" value="0" step="5" id="ThetaEText" class="text_input">
+          </div>
+          <p class="label">Conical?</p>
+          <div class="list input item">
+
+            <select id="Conical">
+              <option id="1" value="false">No</option>
+              <option id="2" value="true" selected="selected">Yes</option>
+            </select>
+            <p class="label">Bell percent</p>
+            <input type="number" min="0" max="70" value="0" step="5" id="BellPercentText" class="text_input">
+          </div>
+          
+          <div id="canvasWrapper" style="width: 100%; height: 100%">
+            
+          </div>
+        
+
+        
+        </div>
+      </div>
+    </span>
+    <span class="tab_content" id="tab3">
+      <p class="section_label">Combustion chamber parameters</p>
+      <div class="main_properties">
+        <div class="list input">
+          <p class="label">Pc [bar] - Chamber Pressure</p>
+          <div class="list input item">
+            <!-- Pair 3: Pc -->
+
+            <input type="number" min="2" max="20" value="0" class="text_input" id="PcText">
+            <input type="range" min="2" max="20" value="0" class="slider" id="PcSlider">
+          </div>
+          <p class="label">Tc [K] - Chamber Temperature</p>
+          <div class="list input item">
+            <!-- Pair 4: Tc -->
+
+            <input type="number" min="1" max="3500" value="0" class="text_input" id="TcText" step="50">
+            <input type="range" min="1" max="3500" value="0" class="slider" id="TcSlider" step="50">
+          </div>
+
+          <p class="label">Characteristic length</p>
+          <div class="list input item">
+            <!-- Pair 6: Lstar -->
+
+            <input type="number" min="0.3" max="50" value="0" class="text_input" id="LstarText">
+            <input type="range" min="0.3" max="50" value="0" class="slider" id="LstarSlider" step="0.1">
+          </div>
+          <p class="label">Converging section length [mm]</p>
+          <div class="list input item">
+            <!-- Pair 7: Lcc -->
+
+            <input type="number" min="3" max="10" value="0" class="text_input" id="LccText">
+            <input type="range" min="3" max="10" value="0" class="slider" id="LccSlider" step="0.1">
+          </div>
+          <p class="label">Wall thickness multiplier</p>
+          <div class="list input item">
+            <!-- Pair 8: Wt -->
+
+            <input type="number" min="1" max="50" value="0" class="text_input" id="WtMultiText">
+            <input type="range" min="1" max="50" value="0" class="slider" id="WtMultiSlider" step="0.1">
+          </div>
+          <p class="label">Converging section angle [deg]</p>
+          <div class="list input item">
+
+            <input type="number" min="0" max="70" value="0" step="5" id="AlphaCText" class="text_input">
+          </div>
+        </div>
+      </div>
+    </span>
+
+    <span class="tab_content" id="tab4">
+      <p class="section_label">Injector parameters</p>
+      <span class="card injectorType">
+        <p>Injector type</p>
+        <div class="actions">
+          <a class="btn" id="inj1"><label>Self-impinging</label><img src="resources/media/Injector1.svg" width="100%"></a>
+          <a class="btn" id="inj2"><label>Doublet-impinging</label><img src="resources/media/Injector2.svg" width="100%"></a>
+          <a class="btn" id="inj3"><label>Triplet-impinging</label><img src="resources/media/Injector3.svg" width="100%"></a>
+        </div>
+        <p>Angle between injector manifold sets</p>
+        <div class="list input item">
+          <input type="number" min="5" max="45" value="0" step="5" id="injAngleText" class="text_input">
+        <input type="range" min="5" max="45" value="0" step="5" class="slider" id="injAngleSlider" step="1">
+        </div>
+        
+      </span>
+      <span class="injectorDisplay">
+        <div class="injectorProfile"></div>
+      </span>
+    </span>
+    <span class="tab_content" id="tab5">
+      <p class="section_label">Propellant properties</p>
+      <div class="fuel_properties">
+        <div class="list input">
+          <span class="card">
+            <div class="dropdown" target="fuel">
+              <span class="header" state="selected">
+                <a class="btn icon">expand_more</a>
+                <p>Fuel preset</p>
+                <p class="currentPreset"></p>
+                <span class="actions">
+                  <a class="btn"><label>Save</label><i>save</i></a>
+                  <a class="btn"><label>Load</label><i>folder_open</i></a>
+                  <a class="btn"><label>Delete</label><i>delete</i></a>
+                </span>
+              </span>
+              <span class="settings">
+                <p>Preset name</p>
+                <input type="text" class="text_input presetName">
+                <p>Density</p>
+                <input type="number" min="0" max="80" value="0" step="0.001" id="DensityText" class="text_input">
+                <p>Molecular mass</p>
+                <input type="number" min="0" max="80" value="0" step="0.01" id="WText" class="text_input">
+              </span>
+            </div>
+          </span>       
+        </div>
+        <div class="list input">
+          <span class="card">
+            <div class="dropdown" target="oxidiser">
+              <span class="header">
+                <a class="btn icon">expand_more</a>
+                <p>Oxidizer preset</p>
+                <p class="currentPreset"></p>
+                <span class="actions">
+                  <a class="btn"><label>Save</label><i>save</i></a>
+                  <a class="btn"><label>Load</label><i>folder_open</i></a>
+                  <a class="btn"><label>Delete</label><i>delete</i></a>
+                </span>
+              </span>
+              <span class="settings">
+                <p>Preset name</p>
+                <input type="text" class="text_input presetName">
+                <p>Density</p>
+                <input type="number" min="0" max="80" value="0" step="0.001" id="DensityOxText" class="text_input">
+                <p>Molecular mass</p>
+                <input type="number" min="0" max="80" value="0" step="0.01" id="WOxText" class="text_input">
+              </span>
+            </div>
+          </span>         
+        </div>
+        <div class="list input">
+          <span class="card">
+            <p>Ignition delay time (IDT)</p>
+            <input type="number" min="0" max="200" value="0" step="0.1" id="IDTText" class="text_input">  
+          </span>
+        </div>
+      </div>
+    </span>
+
+  </section>
+  <section class="dataContainer fuel" host="fuel">
+    <span class="card">
+      <p>Select fuel preset</p>
+      <div class="intro">
+        <img src="resources/media/empty.svg" width="50%">
+        <p>Please save a fuel preset first.</p>
+      </div>
+    </span>
+  </section>
+  <section class="dataContainer oxidiser" host="oxidiser">
+    <span class="card">
+      <p>Select oxidizer preset</p>
+      <div class="intro">
+        <img src="resources/media/empty.svg" width="50%">
+        <p>Please save an oxidizer preset first.</p>
+      </div>
+    </span>
+  </section>
+
+  <script type="module" src="resources/js/main.js"></script>
+  <script type="module">
+    import CET, { logicCore, inputObject, inputInteract } from '/resources/js/main.js';
+
+    const thruster = new CET();
+    thruster.Thrust = 6.5;
+    thruster.ISP = 200;
+    thruster.Pc = 10;
+    thruster.Tc = 2500;
+    thruster.W = 25.2;
+    thruster.ExpRat = 100;
+    thruster.ThetaE = 15;
+    thruster.BellPercent = 0;
+    thruster.Lcc = 6.5;
+    thruster.AlphaC = 60;
+    thruster.Lstar = 4.7;
+    thruster.Density = 1.11;
+    thruster.IDT = 15;
+    thruster.Stress = 90;
+    thruster.Conical = true;
+    thruster.WtMulti = 1;
+    thruster.NWtMulti = 1;
+    thruster.injectorType = "inj1";
+    thruster.injAngle = 25;
+    inputObject(thruster);
+    logicCore(thruster);
+    inputInteract(thruster);
 
     
-  </head>
-  <body>
-    <section class="main_container">
-        <section class="thruster_properties">
-            <p class="section_label">Thruster properties</p>
-            <div class="main_properties">
-                <div class="list input">
-                    <p class="label">Thrust [N]</p>
-                    <div class="list input item">
-                        <!-- Pair 1: Thrust -->
-                        <input type="number" min="0.1" max="50.0" value="0.0" class="text_input textfield" step="0.1" id="ThrustText">
-                        <input type="range" min="0.1" max="50.0" value="0.0" class="slider" id="ThrustSlider" step="0.1">
-                      </div>
-                      <p class="label">ISP [s]</p>
-                      <div class="list input item">
-                        <!-- Pair 2: ISP -->
-                        
-                        <input type="number" min="0" max="350" value="0" class="text_input" id="ISPText">
-                        <input type="range" min="0" max="350" value="0" class="slider" id="ISPSlider" step="5">
-                      </div>
-                      <p class="label">Pc [bar]</p>
-                      <div class="list input item">
-                        <!-- Pair 3: Pc -->
-                        
-                        <input type="number" min="0" max="20" value="0" class="text_input" id="PcText">
-                        <input type="range" min="0" max="20" value="0" class="slider" id="PcSlider">
-                      </div>
-                      <p class="label">Tc [K]</p>
-                      <div class="list input item">
-                        <!-- Pair 4: Tc -->
-                        
-                        <input type="number" min="1" max="3500" value="0" class="text_input" id="TcText" step="50">
-                        <input type="range" min="1" max="3500" value="0" class="slider" id="TcSlider" step="50">
-                      </div>
-                      <p class="label">Expansion ratio</p>
-                      <div class="list input item">
-                        <!-- Pair 5: ExpRat -->
-                        
-                        <input type="number" min="0" max="200" value="0" class="text_input" id="ExpRatText" step="10">
-                        <input type="range" min="0" max="200" value="0" class="slider" id="ExpRatSlider"  step="10">
-       
-                      </div>
-                      <p class="label">Characteristic length</p>
-                      <div class="list input item">
-                        <!-- Pair 6: Lstar -->
-                        
-                        <input type="number" min="0" max="50" value="0" class="text_input" id="LstarText">
-                        <input type="range" min="0" max="50" value="0" class="slider" id="LstarSlider" step="0.1">
-                      </div>
-                      <p class="label">Converging section length [mm]</p>
-                      <div class="list input item">
-                        <!-- Pair 7: Lcc -->
-                        
-                        <input type="number" min="0" max="10" value="0" class="text_input" id="LccText">
-                        <input type="range" min="0" max="10" value="0" class="slider" id="LccSlider" step="0.1">
-                      </div>
-                      
-                      <p class="label">Nozzle angle [deg]</p>
-                    <div class="list input item"> 
-                        
-                        <input type="number" min="0" max="70" value="0" step="5" id="ThetaEText" class="text_input">
-                    </div>
-                    <p class="label">Converging section angle [deg]</p>
-                    <div class="list input item">
-                        
-                        <input type="number" min="0" max="70" value="0" step="5" id="AlphaCText" class="text_input">
-                    </div>
-                    <p class="label">Conical?</p>
-                    <div class="list input item">
-                       
-                        <select id="Conical">
-                            <option id="1" value="false">No</option>
-                            <option id="2" value="true" selected="selected">Yes</option>
-                        </select>  
-                            <p class="label">Bell percent</p>
-                            <input type="number" min="0" max="70" value="0" step="5" id="BellPercentText" class="text_input">
-                    </div>
-                </div>
-            </div>
-            <div class="fuel_properties">
-                <p>Fuel properties</p>
-                <div class="list input">
-                    
-                    <input type="number" min="0" max="80" value="0" step="0.001" id="DensityText" class="text_input">
-                    <input type="number" min="0" max="80" value="0" step="0.01" id="WText" class="text_input">
-                    <input type="number" min="0" max="200" value="0" step="0.1" id="IDTText" class="text_input">
-                </div>
-            </div>
-            <div class="display_properties">
-                <div class="list buttons">
-                    <a id="Refresh" class="btn">Refresh</a>
-                    <a id="Reset" class="btn">Reset</a>
+  </script>
+  <script type="module" defer>
 
-                    <!--<input type="number" value="0" step="5" id="mDot" class="textfield">-->
-                </div>
-            </div>
-        </section>
-        <section class="thruster_display" id="thrusterContainer">
-            <div class="thruster_container">
-                <div class="combustion_chamber"> </div>
-                <div class="converging_section"> </div>
-                <div class="nozzle"> </div>
-            </div>
-        </section>
-    </section>
-    <script type="module" src="resources/js/main.js"></script>
-    <script type="module">
-        import CET, { logicCore, inputObject, inputInteract } from '/resources/js/main.js';
-        
-        const thruster = new CET();
-        thruster.Thrust = 6.5;
-        thruster.ISP = 200;
-        thruster.Pc = 10;
-        thruster.Tc = 2500;
-        thruster.W = 25.2;
-        thruster.ExpRat = 100;
-        thruster.ThetaE = 15;
-        thruster.BellPercent = 0;
-        thruster.Lcc = 6.5;
-        thruster.AlphaC = 60;
-        thruster.Lstar = 4.7;
-        thruster.Density = 1.11;
-        thruster.IDT = 15;
-        thruster.Conical = true;
 
-        inputObject(thruster);
-        logicCore(thruster); 
-        inputInteract(thruster);
 
-        
-    </script>
 
-    <script type="text/javascript" src="resources/js/ripple.js"></script>
-  </body>
+  </script>
+
+  <script type="text/javascript" src="resources/js/ripple.js"></script>
+</body>
+
 </html>
