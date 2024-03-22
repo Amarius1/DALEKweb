@@ -8,15 +8,10 @@ export function logicCore(thruster) {
     thrusterOutput(thruster);
     thrusterDisplay(thruster);
     bellGenerator(thruster);
-    injectorRun(thruster);
     document.addEventListener('DOMContentLoaded', function () {
         valueCopy(thruster);
-        propellantInput(thruster, "fuel");
-        propellantInput(thruster, "oxidiser");
-        setupInjectorButtons(thruster);
-        injectorRun(thruster);
+
     }, false);
-    
 }
 function nozzleFind(thruster) {
     // Assuming "thruster" is an object with properties corresponding to CET.Thrust, CET.ISP, CET.Pc, CET.W, and CET.ExpRat
@@ -370,11 +365,9 @@ export function inputInteract(thruster) {
             thruster.Stress = 90;
             thruster.WtMulti = 1;
             thruster.NWtMulti = 1;
-            thruster.injectorType = 'inj1';
-            thruster.injAngle = 25;
+
             logicCore(thruster);
             console.log("Data reset");
-            setupInjectorButtons(thruster);
         });
     }
 }
@@ -407,7 +400,6 @@ function thrusterOutput(thruster) {
         console.log("Replaced");
     });
 }
-
 
 function valueCopy(thruster) {
     // Define a flag to track whether the value has been copied recently
@@ -449,7 +441,8 @@ function valueCopy(thruster) {
 }
 
 
-function CET(Thrust, ISP, Pc, Tc, W, ExpRat, ThetaE, Conical, BellPercent, Dt, De, Length, Lc, Lcc, Dc, AlphaC, Ac, mDot, Lstar, IgnLocation, Density, IDT, SLength, SD, InjectorDiameter, A1, A2, v, Rt, Stress, WtMulti, NWtMulti, injectorType, injAngle) {
+
+function CET(Thrust, ISP, Pc, Tc, W, ExpRat, ThetaE, Conical, BellPercent, Dt, De, Length, Lc, Lcc, Dc, AlphaC, Ac, mDot, Lstar, IgnLocation, Density, IDT, SLength, SD, InjectorDiameter, A1, A2, v, Rt, Stress, WtMulti, NWtMulti) {
     this.Thrust = Thrust;
     this.ISP = ISP;
     this.Pc = Pc;
@@ -482,8 +475,6 @@ function CET(Thrust, ISP, Pc, Tc, W, ExpRat, ThetaE, Conical, BellPercent, Dt, D
     this.Stress = Stress;
     this.WtMulti = WtMulti;
     this.NWtMulti = NWtMulti;
-    this.injectorType = injectorType;
-    this.injAngle = injAngle;
 }
 export default CET;
 
@@ -592,34 +583,26 @@ function drawCurves(ctx, thruster, scaleFactor) {
         return flip ? -y : y;
     }
 
-    // Draw the curve
-    function drawCurve(startPoint, startAngleDegrees, endAngleDegrees, length) {
-        const startAngleRadians = (startAngleDegrees * Math.PI) / 180;
-        const endAngleRadians = (endAngleDegrees * Math.PI) / 180;
+    function drawCurveToPoint(x1, y1, deltaX, alpha) {
+      
+        var x2 = x1 + deltaX;
 
-        const endPoint = { x: scaleFactor * length, y: scaleFactor * (startPoint.y + Math.tan(endAngleRadians) * 50) };
-
+         // Draw the straight line between points 1 and 2
         ctx.beginPath();
-        ctx.moveTo(startPoint.x, startPoint.y);
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y1); // y-coordinate is the same as point 1
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-        const controlPoint1 = {
-            x: startPoint.x + (1 / 3) * (endPoint.x - startPoint.x),
-            y: startPoint.y + Math.tan(startAngleRadians) * (1 / 3) * (endPoint.x - startPoint.x),
-        };
+        // Draw the curve
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
 
-        const controlPoint2 = {
-            x: endPoint.x - (1 / 3) * (endPoint.x - startPoint.x),
-            y: endPoint.y - Math.tan(endAngleRadians) * (1 / 3) * (endPoint.x - startPoint.x),
-        };
+        var controlPointX = x1 + deltaX / 2;
+        var controlPointY = y1 + Math.tan(alpha * (Math.PI / 180)) * (deltaX / 2);
 
-        ctx.bezierCurveTo(
-            controlPoint1.x,
-            mirrorY(controlPoint1.y),
-            controlPoint2.x,
-            mirrorY(controlPoint2.y),
-            endPoint.x,
-            mirrorY(endPoint.y)
-        );
+        ctx.quadraticCurveTo(controlPointX, controlPointY, x2, y1);
 
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 2;
@@ -627,18 +610,17 @@ function drawCurves(ctx, thruster, scaleFactor) {
     }
 
     // Draw the original curve
-    const startPoint1 = { x: 0, y: thruster.Rt * scaleFactor };
-    drawCurve(startPoint1, 30, 8, thruster.Length);
+    drawCurveToPoint(0, 100, 130, 15);
 
     // Draw the flipped curve
-    const startPoint2 = { x: 0, y: -thruster.Rt * scaleFactor };
-    drawCurve(startPoint2, -30, -8, thruster.Length);
+    //const startPoint2 = { x: 0, y: -thruster.Rt * scaleFactor };
+    //drawCurve(startPoint2, -30, -8, thruster.Length);
 
-    const startPoint3 = { x: 0, y: thruster.Rt * scaleFactor };
-    drawCurve(startPoint3, 30, 0, -thruster.Lcc);
+    //const startPoint3 = { x: 0, y: thruster.Rt * scaleFactor };
+    //drawCurve(startPoint3, 30, 0, -thruster.Lcc);
 
-    const startPoint4 = { x: 0, y: -thruster.Rt * scaleFactor };
-    drawCurve(startPoint4, -30, -0, -thruster.Lcc);
+    //const startPoint4 = { x: 0, y: -thruster.Rt * scaleFactor };
+    //drawCurve(startPoint4, -30, -0, -thruster.Lcc);
 }
 function manipulateCanvas(thruster) {
     // Check if the element with id "myCanvas" exists
@@ -710,427 +692,4 @@ function bellGenerator(thruster) {
     manipulateCanvas(thruster);
     // Get the canvas element and its 2D context
 
-}
-
-
-/*document.addEventListener('DOMContentLoaded', function (thruster) {
-    var dropdowns = document.querySelectorAll('.dropdown');
-
-    dropdowns.forEach(function (dropdown) {
-      var header = dropdown.querySelector('.header .icon');
-      var settings = dropdown.querySelector('.settings');
-      var saveBtn = dropdown.querySelector('.actions .btn:nth-child(1)');
-      var loadBtn = dropdown.querySelector('.actions .btn:nth-child(2)');
-      var deleteBtn = dropdown.querySelector('.actions .btn:nth-child(3)');
-      
-      header.addEventListener('click', function () {
-        function hasClass(element, className) {
-            return element.className && new RegExp("(^|\\s)" + className + "(\\s|$)").test(element.className);
-        }
-        dropdown.classList.toggle('expanded');
-        if(hasClass(dropdown, 'expanded') == true)
-        {
-            dropdown.style.maxHeight = 2 * header.offsetHeight + "px";
-            console.log(dropdown.offsetHeight);
-        }
-        else 
-        {
-            dropdown.style.maxHeight = 2 * settings.offsetHeight + "px";
-        }
-      });
-
-      saveBtn.addEventListener('click', function () {
-        // Save current values (you can store them in sessionStorage, for example)
-        sessionStorage.setItem('DensityText', document.getElementById('DensityText').value);
-        sessionStorage.setItem('WText', document.getElementById('WText').value);
-      });
-
-      loadBtn.addEventListener('click', function (thruster) {
-        // Load previously saved values
-        var savedDensity = sessionStorage.getItem('DensityText');
-        var savedW = sessionStorage.getItem('WText');
-
-        if (savedDensity !== null && savedW !== null) {
-          document.getElementById('DensityText').value = savedDensity;
-          document.getElementById('WText').value = savedW;
-        }
-        thruster.Density = savedDensity;
-        thruster.W = savedW;
-        logicCore(thruster);
-        console.log(thruster);
-        
-      });
-
-      deleteBtn.addEventListener('click', function () {
-        // Delete saved values
-        sessionStorage.removeItem('DensityText');
-        sessionStorage.removeItem('WText');
-      });
-    });
-    
-  });
-  */
-
-
-  
-  function propellantInput(thruster, host) {
-    const dropdown = document.querySelector(`.dropdown[target="${host}"]`);
-    const fuelSection = document.querySelector(`.dataContainer[host="${host}"]`);
-    const fuelCard = fuelSection.querySelector('.card');
-    let currentPresetContainer; // Keep track of the last clicked preset-container
-
-    // Load presets from local storage on page load
-    window.addEventListener('load', loadPresets);
-
-    function loadPresets() {
-      const savedPresets = JSON.parse(localStorage.getItem('presets')) || [];
-
-      savedPresets.forEach(preset => {
-        if (preset.host === host) {
-          createPresetLink(preset);
-        }
-      });
-    }
-
-    function savePresets(presets) {
-      localStorage.setItem('presets', JSON.stringify(presets));
-    }
-
-    function createPresetLink(preset) {
-      const presetContainer = document.createElement('div');
-      presetContainer.classList.add('preset-container');
-      presetContainer.classList.add('ripple');
-
-      const presetLink = document.createElement('a');
-      presetLink.href = '#';
-      presetLink.id = preset.name;
-      presetLink.innerText = preset.name;
-      presetLink.classList.add('btn');
-
-      const deleteButton = document.createElement('a');
-      deleteButton.innerText = 'Delete preset';
-      deleteButton.classList.add('btn');
-      deleteButton.classList.add('delete-btn');
-      deleteButton.classList.add('ripple');
-
-      const deleteIcon = document.createElement('i');
-      deleteIcon.innerText = 'delete';
-      deleteIcon.classList.add('icon');
-
-      presetContainer.appendChild(presetLink);
-      presetContainer.appendChild(deleteButton);
-      deleteButton.appendChild(deleteIcon);
-
-      presetLink.addEventListener('click', () => {
-        loadPresetValues(preset);
-        markAsCurrent(presetContainer);
-      });
-
-      deleteButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-
-
-        
-        if (presetContainer) {
-            // Add a class to trigger the CSS animation
-            presetContainer.classList.add('deleting');
-
-            // Add a transitionend event listener to remove the element after the animation
-            presetContainer.addEventListener('transitionend', () => {
-            if (fuelCard.contains(presetContainer)) {
-                deletePreset(preset.name);
-                fuelCard.removeChild(presetContainer);
-            }
-            }, { once: true });
-        }
-
-        // Assuming `deletePreset` is asynchronous, you can call it here
-        deletePreset(/* pass the necessary arguments */);
-        });
-
-
-      fuelCard.appendChild(presetContainer);
-    }
-
-    function loadPresetValues(preset) {
-      const presetNameInput = dropdown.querySelector('.presetName');
-      const currentPreset = dropdown.querySelector('.currentPreset');
-
-      // Loop through input elements to dynamically extract data
-      const inputElements = dropdown.querySelectorAll('.dropdown input');
-      inputElements.forEach(input => {
-        const id = input.id;
-        const property = id.replace('Text', '');
-        const value = preset[property] || 0;
-        input.value = value;
-
-        // Update thruster properties dynamically
-        if (thruster.hasOwnProperty(property)) {
-          thruster[property] = parseFloat(input.value);
-        }
-      });
-
-      currentPreset.innerText = preset.name;
-      presetNameInput.value = preset.name;
-
-      logicCore(thruster);
-    }
-
-    function deletePreset(presetName) {
-      const savedPresets = JSON.parse(localStorage.getItem('presets')) || [];
-      const updatedPresets = savedPresets.filter(preset => preset.name !== presetName);
-      savePresets(updatedPresets);
-    }
-
-    const currentNotif = document.createElement('p');
-    currentNotif.innerText = "Currently selected";
-    currentNotif.classList.add('currentPreset');
-
-    function markAsCurrent(presetContainer) {
-      if (currentPresetContainer) {
-        currentPresetContainer.classList.remove('current');
-        currentPresetContainer.removeChild(currentNotif);
-      }
-      currentPresetContainer = presetContainer;
-      currentPresetContainer.classList.add('current');
-      currentPresetContainer.prepend(currentNotif);
-    }
-
-    const header = dropdown.querySelector('.header');
-    const settings = dropdown.querySelector('.settings');
-    const saveBtn = dropdown.querySelector('.actions .btn:nth-child(1)');
-    const loadBtn = dropdown.querySelector('.actions .btn:nth-child(2)');
-    const deleteBtn = dropdown.querySelector('.actions .btn:nth-child(3');
-    const currentPreset = dropdown.querySelector('.currentPreset');
-
-    // Check if 'state' attribute is already 'selected'
-    if (header.getAttribute('state') === 'selected') {
-      settings.classList.add('expanded');
-      settings.style.maxHeight = 300 + "px";
-    }
-
-    // Toggle the expanded class and state attribute on header click
-    header.addEventListener('click', () => {
-      if (settings.classList.contains('expanded')) {
-        settings.classList.remove('expanded');
-        header.removeAttribute('state');
-        settings.style.maxHeight = 0 + "px";
-      } else {
-        settings.classList.add('expanded');
-        header.setAttribute('state', 'selected');
-        settings.style.maxHeight = 300 + "px";
-      }
-    });
-
-    // Save current values to local storage and create a preset link
-    saveBtn.addEventListener('click', (event) => {
-      event.stopPropagation(); // Prevents click on header
-      const presetName = dropdown.querySelector('.presetName').value.trim();
-      if (presetName !== '') {
-        const savedPresets = JSON.parse(localStorage.getItem('presets')) || [];
-        const existingPresetIndex = savedPresets.findIndex(preset => preset.name === presetName && preset.host === host);
-
-        const newPreset = {
-          name: presetName,
-          host: host,
-        };
-
-        // Loop through input elements to dynamically extract data
-        const inputElements = dropdown.querySelectorAll('.dropdown input');
-        inputElements.forEach(input => {
-          const id = input.id;
-          newPreset[id.replace('Text', '')] = parseFloat(input.value);
-        });
-
-        if (existingPresetIndex !== -1) {
-          // Overwrite existing preset
-          savedPresets[existingPresetIndex] = newPreset;
-        } else {
-          savedPresets.push(newPreset);
-          createPresetLink(newPreset);
-        }
-
-        savePresets(savedPresets);
-        currentPreset.innerText = presetName; // Update current preset name
-      }
-    });
-
-    loadBtn.addEventListener('click', (event) => {
-      event.stopPropagation();
-      fuelSection.classList.add('expanded');
-    });
-
-    fuelSection.addEventListener('click', (event) => {
-      if (event.target === fuelSection) {
-        fuelSection.classList.remove('expanded');
-      }
-    });
-
-    // Delete the preset and its associated link
-    deleteBtn.addEventListener('click', (event) => {
-      event.stopPropagation(); // Prevents click on header
-      const presetName = dropdown.querySelector('.presetName').value.trim();
-      if (presetName !== '') {
-        deletePreset(presetName);
-
-        // Remove the preset link from the fuel section
-        const presetContainer = fuelCard.querySelector(`#${presetName}`).parentElement;
-        if (presetContainer) {
-          fuelCard.removeChild(presetContainer);
-        }
-
-        // Clear current preset when deleted
-        currentPreset.innerText = '';
-      }
-    });
-  } 
-
-
-  function setupInjectorButtons(thruster) {
-    // Get the buttons under the "injectorType" element
-    var buttons = document.querySelectorAll('.card.injectorType .btn');
-  
-    // Add click event listener to each button
-    buttons.forEach(function(button) {
-      button.addEventListener('click', function() {
-        // Remove "state" attribute from all buttons
-        buttons.forEach(function(btn) {
-          btn.removeAttribute('state');
-        });
-  
-        // Set "state" attribute to 'selected' for the clicked button
-        this.setAttribute('state', 'selected');
-  
-        // Get the value of the "id" attribute of the clicked button
-        var selectedInjectorType = this.id;
-  
-        // Update the "injectorType" property of the "thruster" object
-        thruster.injectorType = selectedInjectorType;
-        logicCore(thruster);
-        console.log(thruster.injectorType);
-        injectorRun(thruster);
-      });
-    });
-  
-    // Check if "injectorType" property already exists in the thruster object
-    if (thruster.injectorType) {
-      // Find the button with the corresponding "id"
-      var selectedButton = document.getElementById(thruster.injectorType);
-  
-      // If the button is found, set its "state" attribute to 'selected'
-      if (selectedButton) {
-        selectedButton.setAttribute('state', 'selected');
-      }
-    }
-  }
-
-
-  function createRadialElements(distance, angleBetween, thruster, offsetAngle, injectorUse, injDiameter) {
-    // Get the injectorProfile and its parent element
-    var injectorProfile = document.querySelector('.injectorProfile');
-    
-    // Calculate the number of radial elements based on angleBetween
-    var numElements = Math.floor(360 / angleBetween);
-    
-    // Calculate angle increment
-    var angleIncrement = 360 / numElements;
-    
-    const zoomLevel = 10;
-    // Clear any existing radial elements
-    //injectorProfile.innerHTML = '';
-    injectorProfile.style.width = thruster.Dc * zoomLevel + "px"; 
-    injectorProfile.style.paddingBottom = thruster.Dc * zoomLevel + "px";
-    
-    // Create and position radial elements
-    for (var i = 0; i < numElements; i++) {
-        var angle = i * angleIncrement + offsetAngle; // Add offsetAngle
-        var radians = angle * Math.PI / 180;
-        
-        var x = Math.cos(radians) * distance;
-        var y = Math.sin(radians) * distance;
-        
-        // Adjust position considering the center of the radial element
-        var radialElement = document.createElement('div');
-        radialElement.classList.add('radialElement');
-        radialElement.style.left = 'calc(50% + ' + x + 'px - ' + (injDiameter * zoomLevel / 2) + 'px)'; // Adjust for center
-        radialElement.style.top = 'calc(50% + ' + y + 'px - ' + (injDiameter * zoomLevel / 2) + 'px)'; // Adjust for center
-        radialElement.style.width = injDiameter * zoomLevel + 'px';
-        radialElement.style.height = injDiameter * zoomLevel + 'px';
-
-        console.log(injDiameter);
-        
-        // Add injector class based on injectorStyle
-        if (injectorUse === 'fuelInj') {
-            radialElement.classList.add('fuelInj');
-        }
-        if (injectorUse === 'oxInj') {
-            radialElement.classList.add('oxInj');
-        }
-        
-        injectorProfile.appendChild(radialElement);
-    }
-}
-// Example usage: createRadialElements(distance, angleBetween);
-function destroyRadialEmements()
-{
-  var injectorProfile = document.querySelector('.injectorProfile');
-  injectorProfile.innerText = '';
-}
-
-function injectorRun(thruster)
-{
-  var injRows = 2;
-  var injAngle = thruster.injAngle;
-  if (thruster.injectorType === 'inj1')
-  {
-    //createRadialElements(100, 30, thruster, -5, 'fuelInj'); // Distance of 100px and angle between elements of 30 degrees
-    //createRadialElements(100, 30, thruster, 5, 'oxInj'); // Distance of 100px and angle between elements of 30 degrees
-    destroyRadialEmements();
-    for (var i = 1; i < (injRows+1); i++)
-    {
-      var radCount = thruster.Dc*5/i;
-        
-        createRadialElements(radCount-20, injAngle*i, thruster, 0, 'oxInj', 0.5); // Distance of 100px and angle between elements of 30 degrees
-        createRadialElements(radCount-35, injAngle*i, thruster, 0, 'fuelInj', 1); // Distance of 100px and angle between elements of 30 degrees
-
-        
-    }
-    
-  }
-  if (thruster.injectorType === 'inj2')
-  {
-    injRows = 1;
-    //createRadialElements(100, 30, thruster, -5, 'fuelInj'); // Distance of 100px and angle between elements of 30 degrees
-    //createRadialElements(100, 30, thruster, 5, 'oxInj'); // Distance of 100px and angle between elements of 30 degrees
-    destroyRadialEmements();
-    for (var i = 1; i < (injRows+1); i++)
-    {
-      var radCount = thruster.Dc*5/i;
-        
-      createRadialElements(radCount-20, injAngle*i, thruster, 0, 'fuelInj', 0.5); // Distance of 100px and angle between elements of 30 degrees
-      createRadialElements(radCount-20, injAngle*i, thruster, 7.5, 'fuelInj', 0.5); // Distance of 100px and angle between elements of 30 degrees
-      createRadialElements(radCount-20, injAngle*i, thruster, -15, 'oxInj', 0.5); // Distance of 100px and angle between elements of 30 degrees
-      createRadialElements(radCount-20, injAngle*i, thruster, 22.5, 'oxInj', 0.5); // Distance of 100px and angle between elements of 30 degrees
-
-    }
-    
-   
-  }
-  if (thruster.injectorType === 'inj3')
-  {
-    //createRadialElements(100, 30, thruster, -5, 'fuelInj'); // Distance of 100px and angle between elements of 30 degrees
-    //createRadialElements(100, 30, thruster, 5, 'oxInj'); // Distance of 100px and angle between elements of 30 degrees
-    destroyRadialEmements();
-    for (var i = 1; i < (injRows+1); i++)
-    {
-      var radCount = thruster.Dc*5/i;
-        
-        createRadialElements(radCount-20, injAngle*i, thruster, 0, 'oxInj', 0.5); // Distance of 100px and angle between elements of 30 degrees
-        createRadialElements(radCount-35, injAngle*i, thruster, 0, 'fuelInj', 1); // Distance of 100px and angle between elements of 30 degrees
-        createRadialElements(radCount-50, injAngle*i, thruster, 0, 'oxInj', 0.5); // Distance of 100px and angle between elements of 30 degrees
-        
-    }
-    
-   
-  }
 }
